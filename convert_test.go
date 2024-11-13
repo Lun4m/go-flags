@@ -176,3 +176,41 @@ func TestConvertToMapWithDelimiter(t *testing.T) {
 
 	assertString(t, opts.StringStringMap["key"], "value")
 }
+
+func TestConvertToStringSliceWithDelimiter(t *testing.T) {
+	var opts = struct {
+		StringSlice []string `long:"string-slice" delimiter:","`
+	}{}
+
+	p := NewNamedParser("test", Default)
+	grp, _ := p.AddGroup("test group", "", &opts)
+	o := grp.Options()[0]
+
+	err := convert("a,b,c", o.value, o.tag)
+
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+		return
+	}
+	expected := []string{"a", "b", "c"}
+	assertStringArray(t, opts.StringSlice, expected)
+}
+
+func TestConvertToIntSliceWithDelimiter(t *testing.T) {
+	var opts = struct {
+		IntSlice []int `long:"string-slice" delimiter:","`
+	}{}
+
+	p := NewNamedParser("test", Default)
+	grp, _ := p.AddGroup("test group", "", &opts)
+	o := grp.Options()[0]
+
+	err := convert("1,2,3", o.value, o.tag)
+
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+		return
+	}
+	expected := []int{1, 2, 3}
+	assertIntArray(t, opts.IntSlice, expected)
+}

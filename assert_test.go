@@ -82,6 +82,20 @@ func assertBoolArray(t *testing.T, a []bool, b []bool) {
 	}
 }
 
+func assertIntArray(t *testing.T, a []int, b []int) {
+	if len(a) != len(b) {
+		assertErrorf(t, "Expected %#v, but got %#v", b, a)
+		return
+	}
+
+	for i, v := range a {
+		if b[i] != v {
+			assertErrorf(t, "Expected %#v, but got %#v", b, a)
+			return
+		}
+	}
+}
+
 func assertParserSuccess(t *testing.T, data interface{}, args ...string) (*Parser, []string) {
 	parser := NewParser(data, Default&^PrintErrors)
 	ret, err := parser.ParseArgs(args)

@@ -261,15 +261,28 @@ func convert(val string, retval reflect.Value, options multiTag) error {
 		retval.SetFloat(parsed)
 	case reflect.Slice:
 		elemtp := tp.Elem()
-
 		elemvalptr := reflect.New(elemtp)
 		elemval := reflect.Indirect(elemvalptr)
 
-		if err := convert(val, elemval, options); err != nil {
-			return err
-		}
+		delimiter := options.Get("delimiter")
+		if delimiter == "" {
+			if err := convert(val, elemval, options); err != nil {
+				return err
+			}
 
-		retval.Set(reflect.Append(retval, elemval))
+			retval.Set(reflect.Append(retval, elemval))
+		} else {
+			s := strings.Split(val, delimiter)
+			out := reflect.MakeSlice(tp, 0, 0)
+
+			for _, e := range s {
+				if err := convert(e, elemval, options); err != nil {
+					return err
+				}
+				out = reflect.Append(out, elemval)
+			}
+			retval.Set(out)
+		}
 	case reflect.Map:
 		keyValueDelimiter := options.Get("key-value-delimiter")
 		if keyValueDelimiter == "" {
