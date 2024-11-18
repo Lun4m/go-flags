@@ -273,9 +273,13 @@ func convert(val string, retval reflect.Value, options multiTag) error {
 			retval.Set(reflect.Append(retval, elemval))
 		} else {
 			s := strings.Split(val, delimiter)
-			out := reflect.MakeSlice(tp, 0, 0)
+			// This creates an empty slice, not a nil
+			out := reflect.MakeSlice(tp, 0, len(s))
 
 			for _, e := range s {
+				if e == "" {
+					continue
+				}
 				if err := convert(e, elemval, options); err != nil {
 					return err
 				}

@@ -196,6 +196,29 @@ func TestConvertToStringSliceWithDelimiter(t *testing.T) {
 	assertStringArray(t, opts.StringSlice, expected)
 }
 
+func TestConvertToNullSlice(t *testing.T) {
+	var opts = struct {
+		StringSlice []string `long:"string-slice" delimiter:","`
+	}{}
+
+	p := NewNamedParser("test", Default)
+	grp, _ := p.AddGroup("test group", "", &opts)
+	o := grp.Options()[0]
+
+	err := convert("", o.value, o.tag)
+
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+		return
+	}
+	var expected []string
+
+	t.Log(expected, len(expected), expected == nil)
+	t.Log(opts.StringSlice, len(opts.StringSlice), opts.StringSlice == nil)
+
+	assertStringArray(t, opts.StringSlice, expected)
+}
+
 func TestConvertToIntSliceWithDelimiter(t *testing.T) {
 	var opts = struct {
 		IntSlice []int `long:"string-slice" delimiter:","`
